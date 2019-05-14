@@ -1,34 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#b8e986"
-        tools:context=".MainActivity" android:id="@+id/linearLayout" android:orientation="horizontal">
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#b8e986"
+    tools:context=".MainActivity"
+    android:id="@+id/constraint_layout">
 
 
     <ImageView
-            app:srcCompat="@mipmap/ic_note_add_black"
-            android:id="@+id/comment_button"
-            android:layout_weight="1"
-            android:layout_width="149dp"
-            android:layout_height="1235dp"
-            android:layout_marginLeft="15dp" android:visibility="visible" android:cropToPadding="false"
-    />
+        android:id="@+id/comment_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:srcCompat="@mipmap/ic_note_add_black" />
 
     <ImageView
-            android:layout_height="match_parent"
-            app:srcCompat="@mipmap/smiley_happy"
-            android:id="@+id/happy_face"
-            android:layout_weight="1"
-            android:layout_width="match_parent" android:scaleType="center"/>
+        android:id="@+id/happy_face"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:scaleType="center"
+        app:srcCompat="@mipmap/smiley_happy" />
 
     <ImageView
-            android:layout_width="163dp"
-            android:layout_height="1235dp"
-            app:srcCompat="@mipmap/ic_history_black"
-            android:id="@+id/history_button"
-            android:layout_marginRight="15dp"
-            android:layout_weight="1"/>
-</LinearLayout>
+        android:id="@+id/history_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@mipmap/ic_history_black" />
+
+</android.support.constraint.ConstraintLayout>
