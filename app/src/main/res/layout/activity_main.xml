@@ -10,7 +10,7 @@
     android:id="@+id/constraint_layout">
 
 
-    <ImageView
+    <ImageButton
         android:id="@+id/comment_button"
         android:background="@null"
         android:layout_width="wrap_content"
@@ -33,7 +33,7 @@
         android:scaleType="center"
         app:srcCompat="@mipmap/smiley_happy" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/history_button"
         android:background="@null"
         android:layout_width="wrap_content"
