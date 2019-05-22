@@ -1,13 +1,13 @@
 package com.othman.moodtracker.controller;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
@@ -28,8 +28,11 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(android.database.sqlite.SQLiteDatabase db) {
 
-        db.execSQL("CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, DATE INTEGER, MOOD TEXT, COMMENT TEXT)");
-        Log.d("DB", "onCreate called");
+        db.execSQL("CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "                                   DATE INTEGER UNIQUE NOT NULL, " +
+                "                                   MOOD INTEGER NOT NULL, " +
+                "                                   COMMENT TEXT)");
+        Log.d("DATABASE", "onCreate called");
     }
 
     @Override
@@ -54,10 +57,10 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insertData(String mood, String comment) {
+    public void insertData(int mood, String comment) {
 
-        String stringSQL = "insert into mood_table (mood, comment, date) values ('" + mood + "', " + comment + ", " + new Date().getTime() + ")";
-        this.getWritableDatabase().execSQL(stringSQL);
+        String instruction = "INSERT INTO mood_table (mood, comment, date) VALUES ('" + mood + "', " + comment + ", " + new Date().getTime() + ")";
+        this.getWritableDatabase().execSQL(instruction);
         Log.d("DATABASE", "insertData called");
     }
 
@@ -66,5 +69,17 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    public List<Mood> showRecentMoods() {
 
-}
+        List<Mood> recentMoods = new ArrayList<>();
+
+        String instruction = "SELECT * FROM " + TABLE_NAME + " ORDER BY DATE DESC LIMIT 7";
+        Cursor cursor = this.getReadableDatabase().rawQuery(instruction, null);
+        cursor.close();
+
+        return recentMoods;
+    }
+};
+
+
+

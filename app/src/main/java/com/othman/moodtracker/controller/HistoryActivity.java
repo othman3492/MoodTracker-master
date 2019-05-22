@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.othman.moodtracker.R;
 
+import java.util.List;
+
 public class HistoryActivity extends AppCompatActivity {
 
     private View view1;
@@ -19,6 +21,7 @@ public class HistoryActivity extends AppCompatActivity {
     private ImageView imageView1;
     private ImageView imageView2;
     private ConstraintLayout historyConstraintLayout;
+    private SQLiteDatabaseHelper db;
 
 
     @Override
@@ -39,8 +42,19 @@ public class HistoryActivity extends AppCompatActivity {
         mySet1.constrainPercentWidth(view1.getId(), 0.2f);
         mySet1.setVisibility(imageView1.getId(), View.GONE);
         mySet1.applyTo(historyConstraintLayout);
-
         view1.setBackgroundResource(R.color.faded_red);
+
+        ConstraintSet mySet2 = new ConstraintSet();
+        mySet2.clone(historyConstraintLayout);
+        mySet2.constrainPercentWidth(view1.getId(), 0.6f);
+        mySet2.setVisibility(imageView1.getId(), 1);
+        mySet2.applyTo(historyConstraintLayout);
+        view2.setBackgroundResource(R.color.warm_grey);
+
+
+
+
+
 
 
 

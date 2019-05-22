@@ -1,10 +1,13 @@
 package com.othman.moodtracker.controller;
 
+import java.util.Date;
+
 public class Mood {
 
     private int mood;
     private String day;
     private String comment;
+    private Date date;
 
 
     public Mood() {
@@ -13,11 +16,12 @@ public class Mood {
     }
 
 
-    public Mood(int id, String day, String comment) {
+    public Mood(int mood, String day, String comment, Date date) {
 
-        this.mood = id;
+        this.mood = mood;
         this.day = day;
         this.comment = comment;
+        this.date = date;
     }
 
     public int getMood() {
@@ -43,6 +47,13 @@ public class Mood {
     public void setDay(String day) {
         this.day = day;
     }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) { this.date = date; }
 }
+
 
 
