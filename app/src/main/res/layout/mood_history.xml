@@ -15,7 +15,7 @@
         app:layout_constraintHeight_percent="0.17"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.999999999"
+        app:layout_constraintWidth_percent="0.80"
         tools:background="@color/light_sage" />
 
     <TextView
@@ -49,7 +49,7 @@
         app:layout_constraintHeight_percent="0.17"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/history_view"
-        app:layout_constraintWidth_percent="0.999999999" />
+        app:layout_constraintWidth_percent="0.999" />
 
     <TextView
         android:id="@+id/history_textview2"

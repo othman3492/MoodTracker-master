@@ -18,13 +18,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.othman.moodtracker.R;
+
+import org.threeten.bp.LocalDate;
+
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
 
     SQLiteDatabaseHelper db;
+    SQLiteDatabaseHelper dbTest;
 
     private GestureDetector mDetector;
 
@@ -49,12 +55,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         db = new SQLiteDatabaseHelper(this);
+        dbTest = new SQLiteDatabaseHelper(this);
 
         // Default mood set to 1
         smileyNumber = 1;
-        imagesList = new int[] {R.mipmap.smiley_super_happy, R.mipmap.smiley_happy, R.mipmap.smiley_normal, R.mipmap.smiley_disappointed, R.mipmap.smiley_sad};
-        colorsList = new int[] {R.color.banana_yellow, R.color.light_sage, R.color.cornflower_blue_65, R.color.warm_grey, R.color.faded_red};
-        soundsList = new int[] {R.raw.plucky, R.raw.quite_impressed, R.raw.unconvinced, R.raw.open_ended, R.raw.unsure};
+        imagesList = new int[]{R.mipmap.smiley_super_happy, R.mipmap.smiley_happy, R.mipmap.smiley_normal, R.mipmap.smiley_disappointed, R.mipmap.smiley_sad};
+        colorsList = new int[]{R.color.banana_yellow, R.color.light_sage, R.color.cornflower_blue_65, R.color.warm_grey, R.color.faded_red};
+        soundsList = new int[]{R.raw.plucky, R.raw.quite_impressed, R.raw.unconvinced, R.raw.open_ended, R.raw.unsure};
 
         mainConstraintLayout = findViewById(R.id.constraint_layout);
         smiley = findViewById(R.id.happy_face);
@@ -64,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         mDetector = new GestureDetector(this, new GestureListener());
 
         mainConstraintLayout.setOnTouchListener(touchListener);
+
 
         // Set comment button to show an AlertDialog
         commentButton.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                         EditText comment = ((AlertDialog) dialog).findViewById(R.id.comment_dialog);
                         if (comment != null) {
                             String userComment = comment.getText().toString();
-                            db.insertData(smileyNumber, "'" + userComment + "'");
+                            db.insertData(smileyNumber, userComment, LocalDate.now().toString());
                             Log.d("DATABASE_TEST", "'" + userComment + "'");
                         } else {
                             dialog.cancel();
@@ -128,6 +136,11 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
+    private void toastMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
         private static final int SWIPE_MIN_DISTANCE = 120;
@@ -142,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
             MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), soundsList[smileyNumber]);
             mediaPlayer.start();
         }
-
 
 
         @Override
@@ -165,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
                 return false;
 
-            // Top to bottom
+                // Top to bottom
             } else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
                 Log.d("TEST", "fling down");
                 if (smileyNumber < colorsList.length - 1) {

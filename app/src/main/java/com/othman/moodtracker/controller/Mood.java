@@ -1,35 +1,34 @@
 package com.othman.moodtracker.controller;
 
-import java.util.Date;
+
+import org.threeten.bp.LocalDate;
+
 
 public class Mood {
 
-    private int mood;
-    private String day;
+    private int moodType;
     private String comment;
-    private Date date;
+    private String date;
 
 
-    public Mood() {
-
+    public Mood () {
 
     }
 
+    public Mood (int moodType, String comment) {
 
-    public Mood(int mood, String day, String comment, Date date) {
+        moodType = this.moodType;
+        date = LocalDate.now().toString();
+        comment = this.comment;
 
-        this.mood = mood;
-        this.day = day;
-        this.comment = comment;
-        this.date = date;
     }
 
-    public int getMood() {
-        return mood;
+    public int getMoodType() {
+        return moodType;
     }
 
-    public void setMood(int idMood) {
-        this.mood = mood;
+    public void setMoodType(int moodType) {
+        this.moodType = moodType;
     }
 
     public String getComment() {
@@ -40,20 +39,16 @@ public class Mood {
         this.comment = comment;
     }
 
-    public String getDay() {
-        return day;
-    }
-
-    public void setDay(String day) {
-        this.day = day;
-    }
-
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) { this.date = date; }
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    @Override
+    public String toString() {
+        return "" + this.moodType + "";
+    }
 }
-
-
-

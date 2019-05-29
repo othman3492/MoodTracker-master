@@ -1,64 +1,47 @@
 package com.othman.moodtracker.controller;
 
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
+import android.content.DialogInterface;
+import android.database.Cursor;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.othman.moodtracker.R;
 
+import java.util.ArrayList;
 import java.util.List;
+
 
 public class HistoryActivity extends AppCompatActivity {
 
-    private View view1;
-    private View view2;
-    private TextView textView1;
-    private TextView textView2;
-    private ImageView imageView1;
-    private ImageView imageView2;
-    private ConstraintLayout historyConstraintLayout;
     private SQLiteDatabaseHelper db;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.mood_history);
+        setContentView(R.layout.test_data_layout);
 
-        view1 = findViewById(R.id.history_view);
-        view2 = findViewById(R.id.history_view2);
-        textView1 = findViewById(R.id.history_textview);
-        textView2 = findViewById(R.id.history_textview2);
-        imageView1 = findViewById(R.id.history_imageview);
-        imageView2 = findViewById(R.id.history_imageview2);
-        historyConstraintLayout = findViewById(R.id.history_constraint_layout);
-
-        ConstraintSet mySet1 = new ConstraintSet();
-        mySet1.clone(historyConstraintLayout);
-        mySet1.constrainPercentWidth(view1.getId(), 0.2f);
-        mySet1.setVisibility(imageView1.getId(), View.GONE);
-        mySet1.applyTo(historyConstraintLayout);
-        view1.setBackgroundResource(R.color.faded_red);
-
-        ConstraintSet mySet2 = new ConstraintSet();
-        mySet2.clone(historyConstraintLayout);
-        mySet2.constrainPercentWidth(view1.getId(), 0.6f);
-        mySet2.setVisibility(imageView1.getId(), 1);
-        mySet2.applyTo(historyConstraintLayout);
-        view2.setBackgroundResource(R.color.warm_grey);
+        db = new SQLiteDatabaseHelper(this);
+        final ArrayList<Mood> recentMoods = db.showRecentMoods();
 
 
+        RecyclerView recyclerView = findViewById(R.id.history_recyclerview);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        db = new SQLiteDatabaseHelper(this);
+
+        ArrayList<Mood> moodList = db.showRecentMoods();
+
+        MoodAdapter moodAdapter = new MoodAdapter(moodList, this);
+        recyclerView.setAdapter(moodAdapter);
 
 
-
-
-
-
-
-
+        }
     }
-}
