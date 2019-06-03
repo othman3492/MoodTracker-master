@@ -2,11 +2,8 @@ package com.othman.moodtracker.controller;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,7 +11,6 @@ import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -23,8 +19,6 @@ import android.widget.Toast;
 import com.othman.moodtracker.R;
 
 import org.threeten.bp.LocalDate;
-
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -44,9 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageButton commentButton;
     private ImageButton historyButton;
-
-    private Button okButton;
-    private Button cancelButton;
+    private ImageButton pieChartButton;
+    private ImageButton shareButton;
 
 
     @Override
@@ -67,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         smiley = findViewById(R.id.happy_face);
         commentButton = findViewById(R.id.comment_button);
         historyButton = findViewById(R.id.history_button);
+        pieChartButton = findViewById(R.id.pie_chart_button);
+        shareButton = findViewById(R.id.share_button);
 
         mDetector = new GestureDetector(this, new GestureListener());
 
@@ -94,7 +89,11 @@ public class MainActivity extends AppCompatActivity {
                         EditText comment = ((AlertDialog) dialog).findViewById(R.id.comment_dialog);
                         if (comment != null) {
                             String userComment = comment.getText().toString();
-                            db.insertData(smileyNumber, userComment, LocalDate.now().toString());
+
+                            boolean dataInserted = db.insertTest(smileyNumber, userComment, LocalDate.now().toString());
+                            if (dataInserted)
+                                Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_LONG).show();
+
                             Log.d("DATABASE_TEST", "'" + userComment + "'");
                         } else {
                             dialog.cancel();
@@ -121,6 +120,29 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
                 startActivity(intent);
+            }
+        });
+
+
+        // Set button to start PieChartActivity
+        pieChartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, PieChartActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+        // Set button to share mood
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                String shareBody = db.getCurrentMood().toString();
+                intent.putExtra(Intent.EXTRA_SUBJECT, shareBody);
+                startActivity(Intent.createChooser(intent, "Share using"));
             }
         });
 

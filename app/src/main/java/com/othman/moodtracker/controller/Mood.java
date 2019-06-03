@@ -1,8 +1,6 @@
 package com.othman.moodtracker.controller;
 
 
-import org.threeten.bp.LocalDate;
-
 
 public class Mood {
 
@@ -15,11 +13,11 @@ public class Mood {
 
     }
 
-    public Mood (int moodType, String comment) {
+    public Mood (int moodType, String comment, String date) {
 
-        moodType = this.moodType;
-        date = LocalDate.now().toString();
-        comment = this.comment;
+        this.moodType = moodType;
+        this.comment = comment;
+        this.date = date;
 
     }
 
@@ -48,7 +46,6 @@ public class Mood {
     }
 
     @Override
-    public String toString() {
-        return "" + this.moodType + "";
+    public String toString() { return "" + this.moodType + "";
     }
 }

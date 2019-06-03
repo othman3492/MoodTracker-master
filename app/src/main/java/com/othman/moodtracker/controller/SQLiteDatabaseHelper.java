@@ -28,7 +28,7 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(android.database.sqlite.SQLiteDatabase db) {
+    public void onCreate(SQLiteDatabase db) {
 
         disableWal(db);
 
@@ -48,25 +48,29 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(android.database.sqlite.SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(db);
     }
 
     public Mood getCurrentMood() {
 
-        Cursor myCursor = getReadableDatabase().query(TABLE_NAME, null, COL_DATE + " == " + LocalDate.now(), null, null, null, COL_DATE + " DESC ", "1");
+        Cursor cursor = getReadableDatabase().query(TABLE_NAME, null, COL_DATE + " == '" + LocalDate.now() + "'",
+                                                null, null, null, COL_DATE + " DESC ", "1");
 
-        if (myCursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
+
             Mood mood = new Mood();
-            mood.setMoodType(myCursor.getInt(myCursor.getColumnIndex(COL_MOOD)));
-            mood.setComment(myCursor.getString(myCursor.getColumnIndex(COL_COMMENT)));
+            mood.setMoodType(cursor.getInt(cursor.getColumnIndex(COL_MOOD)));
+            mood.setComment(cursor.getString(cursor.getColumnIndex(COL_COMMENT)));
+            mood.setDate((cursor.getString(cursor.getColumnIndex(COL_DATE))));
 
-            myCursor.close();
+            cursor.close();
             return mood;
         }
 
-        myCursor.close();
+        cursor.close();
         return null;
 
     }
@@ -83,12 +87,12 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public ArrayList<Mood> showRecentMoods() {
+    public ArrayList<Mood> getRecentMoods() {
 
         ArrayList<Mood> recentMoods = new ArrayList<>();
 
-        String instruction = "SELECT * FROM " + TABLE_NAME + " ORDER BY DATE DESC LIMIT 7";
-        Cursor cursor = this.getReadableDatabase().rawQuery(instruction, null);
+        String instruction = "SELECT * FROM " + TABLE_NAME + " ORDER BY " + COL_DATE + " DESC LIMIT 7";
+        Cursor cursor = this.getWritableDatabase().rawQuery(instruction, null);
 
         while (cursor.moveToNext()) {
             Mood mood = new Mood();
@@ -98,6 +102,7 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
 
             recentMoods.add(mood);
         }
+
         cursor.close();
 
         return recentMoods;
@@ -133,13 +138,6 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
             return true;
     }
 
-
-    public Cursor getData() {
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
-        return cursor;
-    }
 };
 
 
