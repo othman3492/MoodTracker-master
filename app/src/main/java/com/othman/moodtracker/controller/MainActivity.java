@@ -1,5 +1,6 @@
 package com.othman.moodtracker.controller;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -17,14 +18,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.othman.moodtracker.R;
+import com.othman.moodtracker.model.SQLiteDatabaseHelper;
 
 import org.threeten.bp.LocalDate;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    SQLiteDatabaseHelper db;
-    SQLiteDatabaseHelper dbTest;
+    private SQLiteDatabaseHelper db;
 
     private GestureDetector mDetector;
 
@@ -36,10 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private int[] colorsList;
     private int[] soundsList;
 
-    private ImageButton commentButton;
-    private ImageButton historyButton;
-    private ImageButton pieChartButton;
-    private ImageButton shareButton;
+    private LocalDate currentDate;
 
 
     @Override
@@ -47,15 +45,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        db = new SQLiteDatabaseHelper(this);
-        dbTest = new SQLiteDatabaseHelper(this);
+        ImageButton commentButton;
+        ImageButton historyButton;
+        ImageButton pieChartButton;
+        ImageButton shareButton;
 
-        // Default mood set to 1
-        smileyNumber = 1;
+        db = new SQLiteDatabaseHelper(this);
+        currentDate = LocalDate.now();
+
         imagesList = new int[]{R.mipmap.smiley_super_happy, R.mipmap.smiley_happy, R.mipmap.smiley_normal, R.mipmap.smiley_disappointed, R.mipmap.smiley_sad};
         colorsList = new int[]{R.color.banana_yellow, R.color.light_sage, R.color.cornflower_blue_65, R.color.warm_grey, R.color.faded_red};
         soundsList = new int[]{R.raw.plucky, R.raw.quite_impressed, R.raw.unconvinced, R.raw.open_ended, R.raw.unsure};
 
+        // Bind views
         mainConstraintLayout = findViewById(R.id.constraint_layout);
         smiley = findViewById(R.id.happy_face);
         commentButton = findViewById(R.id.comment_button);
@@ -63,25 +65,28 @@ public class MainActivity extends AppCompatActivity {
         pieChartButton = findViewById(R.id.pie_chart_button);
         shareButton = findViewById(R.id.share_button);
 
+        // Set listeners to use OnFling method to swipe between moods
         mDetector = new GestureDetector(this, new GestureListener());
-
         mainConstraintLayout.setOnTouchListener(touchListener);
 
+        // Set default mood to 1 (happy) and display it
+        smileyNumber = 1;
+        setMoodSettings(smileyNumber);
+        db.insertData(smileyNumber, null, LocalDate.now().toString());
 
-        // Set comment button to show an AlertDialog
+        // Set comment button to show an AlertDialog with two buttons
         commentButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("InflateParams")
             @Override
             public void onClick(View v) {
 
                 final AlertDialog.Builder commentDialog = new AlertDialog.Builder(v.getContext());
                 LayoutInflater inflater = getLayoutInflater();
-
                 commentDialog.setView(inflater.inflate(R.layout.comment_dialog, null));
-
                 commentDialog.setTitle("Commentary");
-
                 commentDialog.setCancelable(true);
 
+                // Set positive button to save comment, get comment and confirm the saved state with a Toast message
                 commentDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -90,10 +95,9 @@ public class MainActivity extends AppCompatActivity {
                         if (comment != null) {
                             String userComment = comment.getText().toString();
 
-                            boolean dataInserted = db.insertTest(smileyNumber, userComment, LocalDate.now().toString());
+                            boolean dataInserted = db.insertData(smileyNumber, userComment, LocalDate.now().toString());
                             if (dataInserted)
-                                Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_LONG).show();
-
+                                Toast.makeText(MainActivity.this, "Comment saved", Toast.LENGTH_LONG).show();
                             Log.d("DATABASE_TEST", "'" + userComment + "'");
                         } else {
                             dialog.cancel();
@@ -101,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+                // Set negative button to cancel
                 commentDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -114,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        // Set history button to start HistoryActivity
+        // Set button to start HistoryActivity
         historyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
-                String shareBody = db.getCurrentMood().toString();
+                String shareBody = "Here is my mood of the day : " + db.getCurrentMood().toString();
                 intent.putExtra(Intent.EXTRA_SUBJECT, shareBody);
                 startActivity(Intent.createChooser(intent, "Share using"));
             }
@@ -148,69 +153,91 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    View.OnTouchListener touchListener = new View.OnTouchListener() {
+    private final View.OnTouchListener touchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+
+            v.performClick();
             return mDetector.onTouchEvent(event);
 
         }
     };
 
 
-    private void toastMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        LocalDate dateOnResume = LocalDate.now();
+
+        // Compare date on resume and display default mood if on the next day
+        if (dateOnResume.isAfter(currentDate)) {
+            smileyNumber = 1;
+            setMoodSettings(smileyNumber);
+            db.insertData(smileyNumber, null, LocalDate.now().toString());
+        } else {
+            setMoodSettings(smileyNumber);
+        }
     }
 
 
-    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+        class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
-        private static final int SWIPE_MIN_DISTANCE = 120;
-        private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+            private static final int SWIPE_MIN_DISTANCE = 120;
+            private static final int SWIPE_THRESHOLD_VELOCITY = 200;
 
 
-        // Change mood depending on swipe direction
-        public void setMoodSettings(int smileyNumber) {
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+
+                // Bottom to top
+                if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                    Log.d("TEST", "fling up");
+                    if (smileyNumber > 0) {
+                        smileyNumber--;
+                        setMoodSettings(smileyNumber);
+                        setSound();
+                        db.insertData(smileyNumber, null, LocalDate.now().toString());
+                        Log.d("TEST", Integer.toString(smileyNumber));
+                    }
+
+                    return false;
+
+                    // Top to bottom
+                } else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                    Log.d("TEST", "fling down");
+                    if (smileyNumber < colorsList.length - 1) {
+                        smileyNumber++;
+                        setMoodSettings(smileyNumber);
+                        setSound();
+                        db.insertData(smileyNumber, null, LocalDate.now().toString());
+                        Log.d("TEST", Integer.toString(smileyNumber));
+                    }
+
+                    return false;
+                }
+                return false;
+            }
+
+        }
+
+        // Set background color and smiley image depending on chosen mood
+        private void setMoodSettings ( int smileyNumber){
 
             mainConstraintLayout.setBackgroundResource(colorsList[smileyNumber]);
             smiley.setImageResource(imagesList[smileyNumber]);
+        }
+
+        // Play sound depending on chosen mood
+        private void setSound () {
+
             MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), soundsList[smileyNumber]);
             mediaPlayer.start();
         }
-
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
-
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
-            // Bottom to top
-            if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
-                Log.d("TEST", "fling up");
-                if (smileyNumber > 0) {
-                    smileyNumber--;
-                    setMoodSettings(smileyNumber);
-                    Log.d("TEST", Integer.toString(smileyNumber));
-                }
-
-                return false;
-
-                // Top to bottom
-            } else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
-                Log.d("TEST", "fling down");
-                if (smileyNumber < colorsList.length - 1) {
-                    smileyNumber++;
-                    setMoodSettings(smileyNumber);
-                    Log.d("TEST", Integer.toString(smileyNumber));
-                }
-
-                return false;
-            }
-            return false;
-        }
     }
-}

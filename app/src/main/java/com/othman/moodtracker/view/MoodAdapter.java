@@ -1,7 +1,5 @@
-package com.othman.moodtracker.controller;
+package com.othman.moodtracker.view;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -14,22 +12,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.othman.moodtracker.R;
+import com.othman.moodtracker.model.Mood;
+
+import org.threeten.bp.temporal.ChronoUnit;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder> {
 
-    Context context;
-    List<Mood> moodList;
-    RecyclerView recyclerView;
-    private String[] daysList = {"Today", "Yesterday", "2 days ago", "3 days ago", "4 days ago", "5 days ago", "6 days ago"};
+    private final ArrayList<Mood> moodList;
+    private final RecyclerView recyclerView;
 
 
-    public MoodAdapter(Context context, ArrayList<Mood> moodList, RecyclerView recyclerView) {
+    public MoodAdapter(ArrayList<Mood> moodList, RecyclerView recyclerView) {
         this.moodList = moodList;
-        this.context = context;
         this.recyclerView = recyclerView;
     }
 
@@ -37,6 +34,7 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
     @Override
     public MoodViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
+        // Find view holder's height by dividing parent by the number of view holders
         int height = recyclerView.getHeight() / 7;
 
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_layout, parent, false);
@@ -44,6 +42,7 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
 
         ViewGroup.LayoutParams layoutParams = constraintLayout.getLayoutParams();
 
+        // Apply view holder's height
         layoutParams.height = height;
         constraintLayout.setLayoutParams(layoutParams);
 
@@ -53,46 +52,61 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
     @Override
     public void onBindViewHolder(@NonNull MoodViewHolder viewHolder, int position) {
 
+        // Display history list
         final Mood mood = moodList.get(position);
 
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(viewHolder.historyConstraintLayout);
 
+        // Apply color and size settings depending on moods displayed
         switch (mood.getMoodType()) {
-            case 0 :
+            case 0:
                 viewHolder.historyView.setBackgroundResource(R.color.banana_yellow);
                 constraintSet.constrainPercentWidth(R.id.history_view, 1);
                 break;
-            case 1 :
+            case 1:
                 viewHolder.historyView.setBackgroundResource(R.color.light_sage);
                 constraintSet.constrainPercentWidth(R.id.history_view, 0.8f);
                 break;
-            case 2 :
+            case 2:
                 viewHolder.historyView.setBackgroundResource(R.color.cornflower_blue_65);
                 constraintSet.constrainPercentWidth(R.id.history_view, 0.6f);
                 break;
-            case 3 :
+            case 3:
                 viewHolder.historyView.setBackgroundResource(R.color.warm_grey);
                 constraintSet.constrainPercentWidth(R.id.history_view, 0.4f);
                 break;
-            case 4 :
+            case 4:
                 viewHolder.historyView.setBackgroundResource(R.color.faded_red);
                 constraintSet.constrainPercentWidth(R.id.history_view, 0.2f);
                 break;
-            default :
+            default:
                 constraintSet.constrainPercentHeight(R.id.history_view, 0f);
         }
 
         viewHolder.historyConstraintLayout.setConstraintSet(constraintSet);
 
 
+        // Get the exact number of days for each mood displayed
+        for (int i = 0; i < 7; i++) {
+            long nbDays = ChronoUnit.DAYS.between(org.threeten.bp.LocalDate.now(), org.threeten.bp.LocalDate.parse(mood.getDate()));
 
+            switch ((int) -nbDays) {
+                case 0:
+                    viewHolder.days.setText("Today");
+                    break;
+                case 1:
+                    viewHolder.days.setText("Yesterday");
+                    break;
+                default:
+                    viewHolder.days.setText(-nbDays + " days ago");
+                    break;
+            }
+        }
 
-
-        viewHolder.days.setText(daysList[position]);
-
-        if (moodList.get(position).getComment() == null)
-            viewHolder.commentButton.setVisibility(View.INVISIBLE);
+        // Set the comment button visible if there's a comment to show, and display it in a Toast message
+        if (mood.getComment() == null)
+            viewHolder.commentButton.setVisibility(View.GONE);
 
         viewHolder.commentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,15 +125,14 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
 
 
 
+    class MoodViewHolder extends RecyclerView.ViewHolder {
 
-    public class MoodViewHolder extends RecyclerView.ViewHolder {
+        final View historyView;
+        final TextView days;
+        final ImageView commentButton;
+        final ConstraintLayout historyConstraintLayout;
 
-        View historyView;
-        TextView days;
-        ImageView commentButton;
-        ConstraintLayout historyConstraintLayout;
-
-        public MoodViewHolder(View view) {
+        MoodViewHolder(View view) {
             super(view);
 
             historyView = view;

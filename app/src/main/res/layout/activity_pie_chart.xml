@@ -7,7 +7,7 @@
     tools:context=".controller.PieChartActivity">
 
     <lecho.lib.hellocharts.view.PieChartView
-        android:id="@+id/pie_chart_test_view"
+        android:id="@+id/pie_chart_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

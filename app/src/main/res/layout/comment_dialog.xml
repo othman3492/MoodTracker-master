@@ -14,8 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:hint="Type your comment here"
+        android:hint="@string/type_your_comment_here"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        android:inputType="text"
+        android:importantForAutofill="no" />
 
 </android.support.constraint.ConstraintLayout>
