@@ -106,7 +106,7 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
 
         // Set the comment button visible if there's a comment to show, and display it in a Toast message
         if (mood.getComment() == null)
-            viewHolder.commentButton.setVisibility(View.GONE);
+            viewHolder.commentButton.setVisibility(View.INVISIBLE);
 
         viewHolder.commentButton.setOnClickListener(new View.OnClickListener() {
             @Override

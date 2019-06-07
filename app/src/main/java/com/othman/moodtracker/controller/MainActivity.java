@@ -144,10 +144,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                String shareBody = "Here is my mood of the day : " + db.getCurrentMood().toString();
-                intent.putExtra(Intent.EXTRA_SUBJECT, shareBody);
-                startActivity(Intent.createChooser(intent, "Share using"));
+                intent.setType("plain/text");
+                String shareText = "Here is my mood of the day : " + db.getCurrentMood().toString() + " ! " + db.getCurrentMood().getComment();
+                intent.putExtra(Intent.EXTRA_SUBJECT, shareText);
+                startActivity(Intent.createChooser(intent, "Share your mood using"));
             }
         });
 
