@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import org.threeten.bp.LocalDate;
 
@@ -24,7 +23,7 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
 
     public SQLiteDatabaseHelper(Context context) {
 
-        super(context, DB_NAME, null, 3);
+        super(context, DB_NAME, null, 1);
     }
 
     @Override
@@ -34,7 +33,6 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
                 COL_DATE + " TEXT PRIMARY KEY NOT NULL, " +
                 COL_MOOD + " INTEGER NOT NULL, " +
                 COL_COMMENT + " TEXT)");
-        Log.d("DATABASE", "onCreate called");
     }
 
     @Override
@@ -46,8 +44,7 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        onCreate(db);
+
     }
 
     // Get last mood saved in database
@@ -105,7 +102,6 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_COMMENT, comment);
         contentValues.put(COL_MOOD, mood);
 
-        Log.d("TAGINSERT", "insertData : Add " + date + " " + comment + " " + mood + "into " + TABLE_NAME);
         long result = db.insertWithOnConflict(TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
 
         return result != -1;

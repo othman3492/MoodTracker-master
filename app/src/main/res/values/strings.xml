@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">MoodTracker</string>
     <string name="mood_date">Mood\'s date</string>
     <string name="Day">Day</string>
@@ -8,4 +8,8 @@
     <string name="pie_chart_button">Pie chart button</string>
     <string name="share_button">Share button</string>
     <string name="type_your_comment_here">Type your comment here</string>
+    <plurals name="x_days_ago" tools:ignore="MissingQuantity">%d days ago</plurals>
+    <string name="yesterday">Yesterday</string>
+    <string name="today">Today</string>
+
 </resources>

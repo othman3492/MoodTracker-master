@@ -16,7 +16,6 @@ import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.view.PieChartView;
 
 
-
 public class PieChartActivity extends AppCompatActivity {
 
     private SQLiteDatabaseHelper db;
@@ -54,35 +53,35 @@ public class PieChartActivity extends AppCompatActivity {
     }
 
 
-        // Increment different mood quantities to fill pie chart
-        private void getData() {
+    // Increment different mood quantities to fill pie chart
+    private void getData() {
 
 
-            ArrayList<Mood> moodArrayList = db.getRecentMoods();
+        ArrayList<Mood> moodArrayList = db.getRecentMoods();
 
-            for (Mood m : moodArrayList) {
+        for (Mood m : moodArrayList) {
 
-                int moodType = m.getMoodType();
+            int moodType = m.getMoodType();
 
-                switch (moodType) {
-                    case 0 :
-                        moodQuantities[0]++;
-                        break;
-                    case 1 :
-                        moodQuantities[1]++;
-                        break;
-                    case 2 :
-                        moodQuantities[2]++;
-                        break;
-                    case 3 :
-                        moodQuantities[3]++;
-                        break;
-                    case 4 :
-                        moodQuantities[4]++;
-                        break;
-
-                }
+            switch (moodType) {
+                case 0:
+                    moodQuantities[0]++;
+                    break;
+                case 1:
+                    moodQuantities[1]++;
+                    break;
+                case 2:
+                    moodQuantities[2]++;
+                    break;
+                case 3:
+                    moodQuantities[3]++;
+                    break;
+                case 4:
+                    moodQuantities[4]++;
+                    break;
 
             }
+
         }
+    }
 }

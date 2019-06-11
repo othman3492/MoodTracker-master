@@ -1,5 +1,6 @@
 package com.othman.moodtracker.view;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -49,6 +50,7 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
         return new MoodViewHolder(v);
     }
 
+    @SuppressLint("ResourceType")
     @Override
     public void onBindViewHolder(@NonNull MoodViewHolder viewHolder, int position) {
 
@@ -84,8 +86,6 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
                 constraintSet.constrainPercentHeight(R.id.history_view, 0f);
         }
 
-        viewHolder.historyConstraintLayout.setConstraintSet(constraintSet);
-
 
         // Get the exact number of days for each mood displayed
         for (int i = 0; i < 7; i++) {
@@ -93,20 +93,20 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
 
             switch ((int) -nbDays) {
                 case 0:
-                    viewHolder.days.setText("Today");
+                    viewHolder.days.setText(viewHolder.days.getContext().getString(R.string.today));
                     break;
                 case 1:
-                    viewHolder.days.setText("Yesterday");
+                    viewHolder.days.setText(viewHolder.days.getContext().getString(R.string.yesterday));
                     break;
                 default:
-                    viewHolder.days.setText(-nbDays + " days ago");
+                    viewHolder.days.setText(viewHolder.days.getContext().getString(R.plurals.x_days_ago, -nbDays));
                     break;
             }
         }
 
         // Set the comment button visible if there's a comment to show, and display it in a Toast message
         if (mood.getComment() == null)
-            viewHolder.commentButton.setVisibility(View.INVISIBLE);
+            constraintSet.setVisibility(R.id.history_imageview, ConstraintSet.GONE);
 
         viewHolder.commentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +115,8 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
             }
         });
 
+        viewHolder.historyConstraintLayout.setConstraintSet(constraintSet);
+
     }
 
 
@@ -122,7 +124,6 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
     public int getItemCount() {
         return moodList.size();
     }
-
 
 
     class MoodViewHolder extends RecyclerView.ViewHolder {
@@ -135,7 +136,7 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
         MoodViewHolder(View view) {
             super(view);
 
-            historyView = view;
+            historyView = itemView.findViewById(R.id.history_view);
             days = itemView.findViewById(R.id.history_textview);
             commentButton = itemView.findViewById(R.id.history_imageview);
             historyConstraintLayout = itemView.findViewById(R.id.history_constraint_layout);

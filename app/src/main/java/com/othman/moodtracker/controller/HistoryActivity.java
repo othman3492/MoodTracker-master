@@ -41,5 +41,5 @@ public class HistoryActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
-        }
     }
+}

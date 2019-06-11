@@ -1,7 +1,7 @@
 package com.othman.moodtracker.model;
 
 
-
+import android.support.annotation.NonNull;
 
 public class Mood {
 
@@ -41,6 +41,7 @@ public class Mood {
 
 
     // Return a string to share current mood in messages
+    @NonNull
     @Override
     public String toString() {
 
@@ -49,19 +50,19 @@ public class Mood {
         switch (moodType) {
             case 0:
                 mood = "super happy";
-            break;
+                break;
             case 1:
                 mood = "happy";
-            break;
+                break;
             case 2:
                 mood = "normal";
-            break;
+                break;
             case 3:
                 mood = "disappointed";
-            break;
+                break;
             case 4:
                 mood = "sad";
-            break;
+                break;
         }
         return mood;
     }

@@ -1,9 +1,10 @@
-package com.othman.moodtracker;
+package com.othman.moodtracker.controller;
 
 import android.app.Application;
 
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
+@SuppressWarnings("ALL")
 public class MainApplication extends Application {
 
     @Override
